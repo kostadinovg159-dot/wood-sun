@@ -13,6 +13,8 @@ export default async function VivaSuccessPage({ searchParams }: PageProps) {
     redirect('/checkout')
   }
 
+  let verificationFailed = false
+
   try {
     const token = await getVivaToken()
 
@@ -23,25 +25,28 @@ export default async function VivaSuccessPage({ searchParams }: PageProps) {
 
     if (!txRes.ok) {
       console.error('Viva transaction verify failed:', txRes.status)
-      redirect('/checkout')
-    }
+      verificationFailed = true
+    } else {
+      const tx = await txRes.json()
+      const orderId: string | undefined = tx.merchantTrns
 
-    const tx = await txRes.json()
-    const orderId: string | undefined = tx.merchantTrns
-
-    // statusId 'F' = Full Capture (successful payment)
-    if (orderId && tx.statusId === 'F') {
-      await prisma.order.update({
-        where: { id: orderId },
-        data: {
-          status: 'PAID',
-          vivaTransactionId: transactionId,
-        },
-      })
+      // statusId 'F' = Full Capture (successful payment)
+      if (orderId && tx.statusId === 'F') {
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            status: 'PAID',
+            vivaTransactionId: transactionId,
+          },
+        })
+      }
     }
   } catch (e) {
     console.error('Viva success page error:', e)
-    // Don't block the redirect even if verification fails
+  }
+
+  if (verificationFailed) {
+    redirect('/checkout')
   }
 
   redirect('/account')

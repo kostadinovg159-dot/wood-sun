@@ -39,6 +39,9 @@ export default async function VivaSuccessPage({ searchParams }: PageProps) {
             vivaTransactionId: transactionId,
           },
         })
+      } else if (orderId) {
+        // Payment was not completed (cancelled, error, etc.) — send customer back to checkout
+        verificationFailed = true
       }
     }
   } catch (e) {

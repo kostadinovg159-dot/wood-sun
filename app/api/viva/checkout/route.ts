@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { getVivaToken, VIVA_API_URL, VIVA_CHECKOUT_BASE } from '@/lib/viva'
 
@@ -19,6 +21,9 @@ export async function POST(request: Request) {
     vatNumber,
   } = body
 
+  const session = await getServerSession(authOptions)
+  const userId = (session?.user as any)?.id as string | undefined
+
   try {
     const sourceCode = process.env.VIVA_SOURCE_CODE
     if (!sourceCode) {
@@ -37,6 +42,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber: `WS-${Date.now()}`,
+        userId: userId || undefined,
         email,
         firstName: firstName || '',
         lastName: lastName || '',
@@ -84,7 +90,7 @@ export async function POST(request: Request) {
           email,
           fullName: `${firstName || ''} ${lastName || ''}`.trim() || email,
           phone: '', // Viva requires the field; phone collection is not part of this checkout flow
-          countryCode: shippingAddress.country === 'BG' ? 'BG' : 'GB',
+          countryCode: ({ US: 'US', CA: 'CA', UK: 'GB', AU: 'AU', BG: 'BG' } as Record<string, string>)[shippingAddress.country] ?? 'GB',
           requestLang: 'en-GB',
         },
         paymentTimeout: 1800,
@@ -103,6 +109,10 @@ export async function POST(request: Request) {
     }
 
     const { orderCode } = await vivaRes.json()
+
+    if (!orderCode) {
+      throw new Error('Viva returned no orderCode in response')
+    }
 
     // 4. Store Viva order code on our order record
     await prisma.order.update({

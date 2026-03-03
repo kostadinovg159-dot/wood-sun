@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { getVivaToken, VIVA_API_URL } from '@/lib/viva'
+import { sendOrderConfirmation } from '@/lib/email'
 
 interface PageProps {
   searchParams: Promise<{ t?: string }>
@@ -39,6 +40,7 @@ export default async function VivaSuccessPage({ searchParams }: PageProps) {
             vivaTransactionId: transactionId,
           },
         })
+        sendOrderConfirmation(orderId).catch(console.error)
       } else if (orderId) {
         // Payment was not completed (cancelled, error, etc.) — send customer back to checkout
         verificationFailed = true

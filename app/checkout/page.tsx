@@ -2,11 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useCart } from '@/components/cart/CartContext'
 
 export default function CheckoutPage() {
+  const { items, clear } = useCart()
   const [step, setStep] = useState<'address' | 'payment'>('address')
   const [orderType, setOrderType] = useState<'b2c' | 'b2b'>('b2c')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'viva'>('stripe')
 
   const [formData, setFormData] = useState({
     // Shipping
@@ -21,10 +24,6 @@ export default function CheckoutPage() {
     // B2B
     companyName: '',
     vatNumber: '',
-    // Payment
-    cardNumber: '',
-    expiry: '',
-    cvc: '',
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -38,18 +37,79 @@ export default function CheckoutPage() {
       setStep('payment')
     } else {
       setIsProcessing(true)
-      // TODO: Process payment with Stripe
-      setTimeout(() => {
-        alert('Order placed successfully!')
-        setIsProcessing(false)
-      }, 2000)
+      const orderItems = items.map((item) => ({
+        variantId: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        name: item.name,
+      }))
+      const payload = {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        items: orderItems,
+        shippingAddress: {
+          streetAddress: formData.streetAddress,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          country: formData.country,
+        },
+        subtotal,
+        shippingCost,
+        tax,
+        total,
+        isB2B: orderType === 'b2b',
+        companyName: formData.companyName,
+        vatNumber: formData.vatNumber,
+      }
+
+      try {
+        const apiEndpoint = paymentMethod === 'viva'
+          ? '/api/viva/checkout'
+          : '/api/stripe/checkout'
+
+        const res = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        if (res.ok) {
+          const data = await res.json()
+          if (data.url) {
+            clear()
+            window.location.href = data.url
+          } else {
+            alert('Failed to start payment session')
+          }
+        } else {
+          const err = await res.json()
+          alert('Failed to initiate checkout: ' + err.error)
+        }
+      } catch (e) {
+        console.error(e)
+        alert('Error starting checkout')
+      }
+
+      setIsProcessing(false)
     }
   }
 
-  const subtotal = 189.98
-  const shippingCost = 10
-  const tax = 19.998
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const shippingCost = subtotal > 0 ? 10 : 0
+  const tax = subtotal * 0.1
   const total = subtotal + shippingCost + tax
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Your cart is empty.</p>
+          <Link href="/cart" className="btn btn-primary">Back to Cart</Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -212,43 +272,49 @@ export default function CheckoutPage() {
                 <div className="space-y-6">
                   <h2>Payment Method</h2>
 
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      placeholder="Card Number"
-                      value={formData.cardNumber}
-                      onChange={handleInputChange}
-                      required
-                      className="input"
-                    />
-                    <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <label
+                      className={`flex items-center gap-4 p-4 border-2 rounded-lg cursor-pointer transition ${
+                        paymentMethod === 'stripe' ? 'border-wood-600 bg-wood-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <input
-                        type="text"
-                        name="expiry"
-                        placeholder="MM/YY"
-                        value={formData.expiry}
-                        onChange={handleInputChange}
-                        required
-                        className="input"
+                        type="radio"
+                        name="paymentMethod"
+                        value="stripe"
+                        checked={paymentMethod === 'stripe'}
+                        onChange={() => setPaymentMethod('stripe')}
+                        className="w-4 h-4 accent-wood-600"
                       />
+                      <div>
+                        <p className="font-medium text-gray-900">Card (Stripe)</p>
+                        <p className="text-sm text-gray-500">Visa, Mastercard, American Express</p>
+                      </div>
+                    </label>
+
+                    <label
+                      className={`flex items-center gap-4 p-4 border-2 rounded-lg cursor-pointer transition ${
+                        paymentMethod === 'viva' ? 'border-wood-600 bg-wood-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <input
-                        type="text"
-                        name="cvc"
-                        placeholder="CVC"
-                        value={formData.cvc}
-                        onChange={handleInputChange}
-                        required
-                        className="input"
+                        type="radio"
+                        name="paymentMethod"
+                        value="viva"
+                        checked={paymentMethod === 'viva'}
+                        onChange={() => setPaymentMethod('viva')}
+                        className="w-4 h-4 accent-wood-600"
                       />
-                    </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Viva Wallet</p>
+                        <p className="text-sm text-gray-500">Cards + local EU payment methods (Bulgaria, Greece, etc.)</p>
+                      </div>
+                    </label>
                   </div>
 
-                  {/* Billing Address Same as Shipping */}
-                  <label className="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-wood-600">
-                    <input type="checkbox" defaultChecked className="w-4 h-4" />
-                    <span className="text-sm text-gray-700">Billing address same as shipping</span>
-                  </label>
+                  <div className="p-3 bg-sage-50 rounded-lg text-xs text-gray-600">
+                    You will be redirected to a secure payment page to complete your order.
+                  </div>
                 </div>
               )}
 
@@ -281,14 +347,12 @@ export default function CheckoutPage() {
 
               {/* Items */}
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Classic Walnut x2</span>
-                  <span className="text-gray-900">$159.98</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Modern Bamboo x1</span>
-                  <span className="text-gray-900">$30.00</span>
-                </div>
+                {items.map((item) => (
+                  <div key={item.id} className="flex justify-between text-sm">
+                    <span className="text-gray-600">{item.name} x{item.quantity}</span>
+                    <span className="text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
+                  </div>
+                ))}
               </div>
 
               {/* Pricing */}

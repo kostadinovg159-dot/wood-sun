@@ -13,18 +13,27 @@ export const VIVA_CHECKOUT_BASE = isDemo
   : 'https://www.vivapayments.com'
 
 export async function getVivaToken(): Promise<string> {
+  const clientId = process.env.VIVA_CLIENT_ID
+  const clientSecret = process.env.VIVA_CLIENT_SECRET
+  if (!clientId || !clientSecret) {
+    throw new Error('VIVA_CLIENT_ID and VIVA_CLIENT_SECRET must be set')
+  }
+
   const res = await fetch(`${VIVA_ACCOUNTS_URL}/connect/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'client_credentials',
-      client_id: process.env.VIVA_CLIENT_ID || '',
-      client_secret: process.env.VIVA_CLIENT_SECRET || '',
+      client_id: clientId,
+      client_secret: clientSecret,
     }),
   })
   if (!res.ok) {
     throw new Error(`Viva token request failed: ${res.status} ${await res.text()}`)
   }
   const data = await res.json()
-  return data.access_token as string
+  if (!data.access_token || typeof data.access_token !== 'string') {
+    throw new Error('Invalid token response from Viva API')
+  }
+  return data.access_token
 }

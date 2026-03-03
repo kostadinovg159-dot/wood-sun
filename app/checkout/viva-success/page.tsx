@@ -52,5 +52,5 @@ export default async function VivaSuccessPage({ searchParams }: PageProps) {
     redirect('/checkout')
   }
 
-  redirect('/account')
+  redirect('/account?checkout=1')
 }

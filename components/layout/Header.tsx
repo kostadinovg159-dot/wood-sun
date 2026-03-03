@@ -3,10 +3,13 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { useCart } from '@/components/cart/CartContext'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session } = useSession()
+  const { items } = useCart()
+  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -38,8 +41,13 @@ export default function Header() {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/cart" className="btn btn-secondary">
+          <Link href="/cart" className="btn btn-secondary relative">
             Cart
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-wood-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
           </Link>
           {session?.user ? (
             <button onClick={() => signOut()} className="btn btn-primary">
@@ -76,8 +84,13 @@ export default function Header() {
                 About
               </Link>
               <hr />
-              <Link href="/cart" className="btn btn-secondary justify-center">
+              <Link href="/cart" className="btn btn-secondary justify-center relative">
                 Cart
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-wood-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {itemCount > 99 ? '99+' : itemCount}
+                  </span>
+                )}
               </Link>
               <Link href="/account" className="btn btn-primary justify-center">
                 Sign In

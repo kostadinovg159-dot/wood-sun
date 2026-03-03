@@ -20,3 +20,15 @@ export function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
+
+export async function sendEmail(payload: { to: string; subject: string; text?: string; html?: string; }) {
+  try {
+    await fetch('/api/emails/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+  } catch (e) {
+    console.error('sendEmail error', e)
+  }
+}

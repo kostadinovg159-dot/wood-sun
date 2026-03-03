@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { data: session } = useSession()
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -20,11 +22,17 @@ export default function Header() {
           <Link href="/products" className="text-gray-700 hover:text-wood-600 transition">
             Shop
           </Link>
-          <Link href="/wholesale" className="text-gray-700 hover:text-wood-600 transition">
+          <Link href="/b2b/register" className="text-gray-700 hover:text-wood-600 transition">
             B2B Wholesale
           </Link>
           <Link href="/about" className="text-gray-700 hover:text-wood-600 transition">
             About
+          </Link>
+          <Link href="/account" className="text-gray-700 hover:text-wood-600 transition">
+            My Account
+          </Link>
+          <Link href="/admin" className="text-gray-700 hover:text-wood-600 transition">
+            Admin
           </Link>
         </div>
 
@@ -33,9 +41,15 @@ export default function Header() {
           <Link href="/cart" className="btn btn-secondary">
             Cart
           </Link>
-          <Link href="/account" className="btn btn-primary">
-            Sign In
-          </Link>
+          {session?.user ? (
+            <button onClick={() => signOut()} className="btn btn-primary">
+              Sign Out
+            </button>
+          ) : (
+            <button onClick={() => signIn()} className="btn btn-primary">
+              Sign In
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}

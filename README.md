@@ -194,15 +194,29 @@ All pages are mobile-first responsive:
 - `POST /api/stripe/checkout` - Create checkout session (TODO)
 - `POST /api/stripe/webhooks` - Handle webhook events (TODO)
 
-## 🔄 Next Steps (Phase 2)
+## 🔄 Phase 2 – B2B & Dashboard
 
-- [ ] Integrate Stripe webhooks for payment confirmation
-- [ ] Add email notifications (Order confirmation, shipping tracking)
-- [ ] Build user dashboard (order history, repeat orders)
-- [ ] Create admin panel (basic order management)
-- [ ] B2B registration workflow & approval
-- [ ] Custom invoice generation (PDF)
-- [ ] Bulk order endpoint for dropshipping
+### Completed
+- ✅ **User Dashboard** (`/account`) lists past orders and B2B info
+- ✅ **Admin Panel** (`/admin`) shows all orders and pending B2B registrations
+- ✅ **B2B Registration** form (`/b2b/register`) + success message
+- ✅ **API Routes**
+  - `POST /api/b2b/register` (creates `B2BRequest` record via Prisma)
+  - `GET /api/b2b/pending` (admin view of un‑approved requests)
+  - `GET /api/users/me` (returns next-auth session user)
+  - `GET/POST /api/orders` (fetch/create orders with Prisma, role aware)
+  - `POST /api/emails/send` (mock email log)
+- ✅ **Prisma Schema** updated with `B2BRequest` model and pushed to SQLite
+- ✅ **NextAuth session** support added for API routes
+- ✅ UI components wired to API endpoints
+
+### Next
+- [ ] Enable email provider (SendGrid, Nodemailer)
+- [ ] Add order detail pages, repeat order button
+- [ ] Admin controls: approve/reject B2B, update order status
+- [ ] Generate invoice PDFs (using jsPDF or PDFKit)
+- [ ] Bulk order/dropshipping API
+- [ ] Deploy on Vercel with proper environment variables
 
 ## 📚 Resources
 

@@ -20,6 +20,19 @@ export async function POST(request: Request) {
   } = body
 
   try {
+    const sourceCode = process.env.VIVA_SOURCE_CODE
+    if (!sourceCode) {
+      throw new Error('VIVA_SOURCE_CODE must be set')
+    }
+
+    if (!items || items.length === 0) {
+      return NextResponse.json({ error: 'Order must contain at least one item' }, { status: 400 })
+    }
+
+    if (!shippingAddress) {
+      return NextResponse.json({ error: 'shippingAddress is required' }, { status: 400 })
+    }
+
     // 1. Create our DB order first so we have an orderId for merchantTrns
     const order = await prisma.order.create({
       data: {
@@ -70,7 +83,7 @@ export async function POST(request: Request) {
         customer: {
           email,
           fullName: `${firstName || ''} ${lastName || ''}`.trim() || email,
-          phone: '',
+          phone: '', // Viva requires the field; phone collection is not part of this checkout flow
           countryCode: shippingAddress.country === 'BG' ? 'BG' : 'GB',
           requestLang: 'en-GB',
         },
@@ -80,7 +93,7 @@ export async function POST(request: Request) {
         maxInstallments: 0,
         paymentNotification: true,
         merchantTrns: order.id,
-        sourceCode: process.env.VIVA_SOURCE_CODE || '',
+        sourceCode,
       }),
     })
 

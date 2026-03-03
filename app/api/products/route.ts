@@ -1,45 +1,74 @@
 import { NextResponse } from 'next/server'
-
-// Mock database
-const products = [
-  {
-    id: '1',
-    name: 'Classic Walnut',
-    slug: 'classic-walnut',
-    price: 79.99,
-    b2bPrice: 49.99,
-    description: 'Handcrafted walnut sunglasses with classic design',
-    material: 'Walnut',
-    style: 'Classic',
-    isPolarized: false,
-    image: '😎',
-  },
-  {
-    id: '2',
-    name: 'Modern Bamboo',
-    slug: 'modern-bamboo',
-    price: 89.99,
-    b2bPrice: 54.99,
-    description: 'Eco-friendly bamboo with modern aesthetic',
-    material: 'Bamboo',
-    style: 'Modern',
-    isPolarized: false,
-    image: '😎',
-  },
-  {
-    id: '3',
-    name: 'Polarized Maple',
-    slug: 'polarized-maple',
-    price: 99.99,
-    b2bPrice: 64.99,
-    description: 'Premium maple with polarized lenses',
-    material: 'Maple',
-    style: 'Classic',
-    isPolarized: true,
-    image: '😎',
-  },
-]
+import { prisma } from '@/lib/db'
 
 export async function GET() {
+  // simple seed logic: if no products exist, create sample data
+  const count = await prisma.product.count()
+  if (count === 0) {
+    const classicWalnut = await prisma.product.create({
+      data: {
+        name: 'Classic Walnut',
+        slug: 'classic-walnut',
+        description: 'Handcrafted walnut sunglasses with classic design',
+        price: 79.99,
+        b2bPrice: 49.99,
+        image: '😎',
+        material: 'Walnut',
+        style: 'Classic',
+        isPolarized: false,
+      },
+    })
+    await prisma.productVariant.createMany({
+      data: [
+        { productId: classicWalnut.id, name: 'Natural Brown / Dark Lenses', sku: 'CW-NAT-DRK', color: 'Natural Brown', lensType: 'Regular', priceDifference: 0, stock: 50 },
+        { productId: classicWalnut.id, name: 'Ebony / Amber Lenses', sku: 'CW-EBO-AMB', color: 'Ebony', lensType: 'UV Protection', priceDifference: 10, stock: 30 },
+      ],
+    })
+
+    const modernBamboo = await prisma.product.create({
+      data: {
+        name: 'Modern Bamboo',
+        slug: 'modern-bamboo',
+        description: 'Eco-friendly bamboo with modern aesthetic',
+        price: 89.99,
+        b2bPrice: 54.99,
+        image: '😎',
+        material: 'Bamboo',
+        style: 'Modern',
+        isPolarized: false,
+      },
+    })
+    await prisma.productVariant.createMany({
+      data: [
+        { productId: modernBamboo.id, name: 'Light Bamboo / Green Lenses', sku: 'MB-LGT-GRN', color: 'Light Bamboo', lensType: 'Regular', priceDifference: 0, stock: 40 },
+        { productId: modernBamboo.id, name: 'Dark Bamboo / Smoke Lenses', sku: 'MB-DRK-SMK', color: 'Dark Bamboo', lensType: 'UV Protection', priceDifference: 10, stock: 25 },
+      ],
+    })
+
+    const polarizedMaple = await prisma.product.create({
+      data: {
+        name: 'Polarized Maple',
+        slug: 'polarized-maple',
+        description: 'Premium maple with polarized lenses',
+        price: 99.99,
+        b2bPrice: 64.99,
+        image: '😎',
+        material: 'Maple',
+        style: 'Classic',
+        isPolarized: true,
+      },
+    })
+    await prisma.productVariant.createMany({
+      data: [
+        { productId: polarizedMaple.id, name: 'Honey Maple / Polarized Brown', sku: 'PM-HON-POL', color: 'Honey Maple', lensType: 'Polarized', priceDifference: 0, stock: 35 },
+        { productId: polarizedMaple.id, name: 'Red Maple / Polarized Grey', sku: 'PM-RED-POL', color: 'Red Maple', lensType: 'Polarized', priceDifference: 15, stock: 20 },
+      ],
+    })
+  }
+
+  const products = await prisma.product.findMany({
+    include: { variants: true },
+    orderBy: { createdAt: 'desc' },
+  })
   return NextResponse.json(products)
 }

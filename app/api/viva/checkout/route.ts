@@ -90,7 +90,7 @@ export async function POST(request: Request) {
           email,
           fullName: `${firstName || ''} ${lastName || ''}`.trim() || email,
           phone: '', // Viva requires the field; phone collection is not part of this checkout flow
-          countryCode: ({ US: 'US', CA: 'CA', UK: 'GB', AU: 'AU', BG: 'BG' } as Record<string, string>)[shippingAddress.country] ?? 'GB',
+          countryCode: shippingAddress.country || 'BG',
           requestLang: 'en-GB',
         },
         paymentTimeout: 1800,

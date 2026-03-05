@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   try {
     const session = await getServerSession(authOptions)
-    const userId = session?.user?.id
+    const userId = (session?.user as any)?.id
 
     const order = await prisma.order.create({
       data: {
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         state: data.shippingAddress.state,
         postalCode: data.shippingAddress.postalCode,
         country: data.shippingAddress.country,
-        isB2B: data.isB2B || false,
+        isB2BOrder: data.isB2B || false,
         companyName: data.companyName,
         vatNumber: data.vatNumber,
         status: 'PENDING',

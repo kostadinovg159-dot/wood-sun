@@ -2,30 +2,46 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 interface Product {
   id: string
   name: string
   slug: string
   price: number
+  b2bPrice?: number
   material: string
 }
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
+  const { data: session } = useSession()
   const [filterMaterial, setFilterMaterial] = useState('all')
   const [sortBy, setSortBy] = useState('featured')
 
   useEffect(() => {
-    // TODO: Fetch products from API with filters
-    setProducts([
-      { id: '1', name: 'Classic Walnut', slug: 'classic-walnut', price: 79.99, material: 'Walnut' },
-      { id: '2', name: 'Modern Bamboo', slug: 'modern-bamboo', price: 89.99, material: 'Bamboo' },
-      { id: '3', name: 'Vintage Oak', slug: 'vintage-oak', price: 84.99, material: 'Oak' },
-      { id: '4', name: 'Polarized Maple', slug: 'polarized-maple', price: 99.99, material: 'Maple' },
-      { id: '5', name: 'Executive Ebony', slug: 'executive-ebony', price: 119.99, material: 'Ebony' },
-      { id: '6', name: 'Eco Bamboo', slug: 'eco-bamboo', price: 74.99, material: 'Bamboo' },
-    ])
+    async function load() {
+      const res = await fetch('/api/products')
+      let data = await res.json()
+      // apply simple material filter
+      if (filterMaterial !== 'all') {
+        data = data.filter((p: any) => p.material.toLowerCase() === filterMaterial)
+      }
+      // simple sort
+      if (sortBy === 'price-low') data.sort((a: any, b: any) => a.price - b.price)
+      if (sortBy === 'price-high') data.sort((a: any, b: any) => b.price - a.price)
+      setProducts(
+        data.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price: p.price,
+          b2bPrice: p.b2bPrice,
+          material: p.material,
+        }))
+      )
+    }
+    load()
   }, [filterMaterial, sortBy])
 
   return (
@@ -125,7 +141,13 @@ export default function ProductsPage() {
                       <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
                       <p className="text-sm text-gray-600 mb-4">{product.material} Wood</p>
                       <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-wood-600">${product.price.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-wood-600">
+                          ${
+                            (session?.user as any)?.isB2B && product.b2bPrice
+                              ? product.b2bPrice.toFixed(2)
+                              : product.price.toFixed(2)
+                          }
+                        </span>
                         <button className="btn btn-primary px-3 py-1 text-sm">Add</button>
                       </div>
                     </div>

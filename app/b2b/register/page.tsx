@@ -42,7 +42,7 @@ export default function B2BRegisterPage() {
   return (
     <div className="container section-padding max-w-lg">
       <h1>Wholesale Registration</h1>
-      <p className="text-gray-600 mb-6">Fill out the form and we’ll review your application.</p>
+      <p className="text-gray-600 mb-6">Fill out the form and we will review your application.</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

@@ -1,49 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-
-interface CartItem {
-  id: string
-  name: string
-  price: number
-  quantity: number
-  customization?: string
-}
+import { useCart } from '@/components/cart/CartContext'
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Classic Walnut + Dark Lenses',
-      price: 79.99,
-      quantity: 2,
-      customization: 'JOHN DOE',
-    },
-    {
-      id: '2',
-      name: 'Modern Bamboo + Polarized',
-      price: 109.99,
-      quantity: 1,
-    },
-  ])
+  const { items, updateQuantity, removeItem, clear } = useCart()
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shippingCost = 10
+  const shippingCost = items.length > 0 ? 10 : 0
   const tax = subtotal * 0.1
   const total = subtotal + shippingCost + tax
 
-  const removeItem = (id: string) => {
-    setItems(items.filter((item) => item.id !== id))
-  }
-
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) {
-      removeItem(id)
-    } else {
-      setItems(items.map((item) => (item.id === id ? { ...item, quantity } : item)))
-    }
-  }
 
   return (
     <div className="min-h-screen bg-white">

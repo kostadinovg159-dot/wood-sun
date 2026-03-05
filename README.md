@@ -183,16 +183,28 @@ All pages are mobile-first responsive:
 ## 📖 API Routes
 
 ### Products
-- `GET /api/products` - List all products with filters
-- `GET /api/products/[id]` - Get single product
+- `GET /api/products` - List all products with filters (seeds sample data)
+- `GET /api/products/[slug]` - Get single product by slug
 
 ### Orders
-- `POST /api/orders` - Create order
+- `POST /api/orders` - Create order directly (used for non‑Stripe flows)
 - `GET /api/orders` - Get user orders
+- `GET /api/orders/[id]` - Get order detail (with items)
+
+### B2B
+- `POST /api/b2b/register` - Submit wholesale account request
+- `GET /api/b2b/pending` - Admin list of pending requests
+- `POST /api/b2b/approve` - Approve request and create user
 
 ### Stripe
-- `POST /api/stripe/checkout` - Create checkout session (TODO)
-- `POST /api/stripe/webhooks` - Handle webhook events (TODO)
+- `POST /api/stripe/checkout` - Create Stripe checkout session and order
+- `POST /api/stripe/webhook` - Receive events and update order status
+
+### Emails
+- `POST /api/emails/send` - Send or log email notifications (uses Nodemailer when EMAIL_SERVER_* vars are set)
+
+_Email configuration in `.env.example` covers SMTP settings; if none provided the server will simply console.log messages._
+
 
 ## 🔄 Phase 2 – B2B & Dashboard
 
@@ -203,20 +215,25 @@ All pages are mobile-first responsive:
 - ✅ **API Routes**
   - `POST /api/b2b/register` (creates `B2BRequest` record via Prisma)
   - `GET /api/b2b/pending` (admin view of un‑approved requests)
-  - `GET /api/users/me` (returns next-auth session user)
-  - `GET/POST /api/orders` (fetch/create orders with Prisma, role aware)
+  - `POST /api/b2b/approve` (admin approval, also creates/updates user)
+  - `GET /api/users/me` (returns enriched next-auth session user)
+  - `GET /api/orders` (fetch orders scoped by role)
+  - `GET /api/orders/[id]` (single order)
+  - `POST /api/orders` (create order with B2B flag)
+  - `POST /api/orders/bulk` (admin bulk order creation)
+  - `GET /api/orders/[id]/invoice` (stub PDF invoice)
   - `POST /api/emails/send` (mock email log)
-- ✅ **Prisma Schema** updated with `B2BRequest` model and pushed to SQLite
-- ✅ **NextAuth session** support added for API routes
-- ✅ UI components wired to API endpoints
+- ✅ **Prisma Schema** updated with `B2BRequest`, `Order` B2B flag, and user fields
+- ✅ **NextAuth session** enrichment callback adds role & B2B info
+- ✅ UI components wired to API endpoints (account, admin, order detail)
 
-### Next
-- [ ] Enable email provider (SendGrid, Nodemailer)
-- [ ] Add order detail pages, repeat order button
-- [ ] Admin controls: approve/reject B2B, update order status
-- [ ] Generate invoice PDFs (using jsPDF or PDFKit)
-- [ ] Bulk order/dropshipping API
-- [ ] Deploy on Vercel with proper environment variables
+### Next Steps
+- [ ] Integrate real email provider (SendGrid, Mailgun, etc.)
+- [ ] Store and serve real invoice PDFs (S3 or similar)
+- [ ] Complete admin features: reject requests, update order status, UI for bulk imports
+- [ ] Migrate product list to Prisma database instead of mocks
+- [ ] Deploy on Vercel with production database & env vars
+- [ ] Implement Stripe/payment and fulfillment workflows
 
 ## 📚 Resources
 

@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import { ReactNode } from 'react'
+import Providers from '@/components/Providers'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 
@@ -18,9 +19,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased bg-white text-gray-900">
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   )

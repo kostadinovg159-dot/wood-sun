@@ -47,3 +47,12 @@ prisma/migrations/*
 # Cache
 .turbo
 dist
+
+# Database
+prisma/dev.db
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Claude Code
+.claude/

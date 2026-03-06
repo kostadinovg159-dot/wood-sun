@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface OrderItem {
@@ -14,14 +14,15 @@ interface OrderItem {
   }
 }
 
-export default function OrderDetailPage({ params }: { params: { id: string } }) {
+export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     async function load() {
-      const res = await fetch(`/api/orders/${params.id}`)
+      const res = await fetch(`/api/orders/${id}`)
       const data = await res.json()
       if (data.error) {
         // redirect if not authorized or not found
@@ -32,7 +33,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       setLoading(false)
     }
     load()
-  }, [params.id, router])
+  }, [id, router])
 
   const repeatOrder = async () => {
     if (!order) return

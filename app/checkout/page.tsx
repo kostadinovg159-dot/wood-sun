@@ -169,6 +169,7 @@ export default function CheckoutPage() {
                         required
                         className="input col-span-2"
                       />
+                      <p className="text-xs text-gray-500 mt-1 col-span-2">No account required &mdash; you can order as a guest.</p>
                       <input
                         type="text"
                         name="firstName"

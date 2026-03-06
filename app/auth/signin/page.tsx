@@ -87,7 +87,7 @@ function SignInContent() {
         </form>
 
         <p className="text-xs text-gray-500 text-center mt-6">
-          No account yet? Just enter your email — we'll create one automatically.
+          No account yet? Just enter your email — we&apos;ll create one automatically.
         </p>
 
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">

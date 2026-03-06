@@ -55,7 +55,7 @@ export default function AccountPage() {
             {fromCheckout ? 'Save your order history' : 'Sign in to your account'}
           </h2>
           <p className="text-gray-600 mb-6 text-sm">
-            Sign in or create an account — no password needed, we'll email you a link.
+            Sign in or create an account — no password needed, we&apos;ll email you a link.
           </p>
 
           {/* Google */}

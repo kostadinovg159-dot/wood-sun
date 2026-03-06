@@ -34,7 +34,7 @@ export default function B2BRegisterPage() {
     return (
       <div className="container section-padding text-center">
         <h1>Thank you!</h1>
-        <p>Your request has been received. We'll contact you shortly.</p>
+        <p>Your request has been received. We&apos;ll contact you shortly.</p>
       </div>
     )
   }

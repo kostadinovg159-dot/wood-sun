@@ -2,6 +2,7 @@ import '@/app/globals.css'
 import { ReactNode } from 'react'
 import Providers from '@/components/Providers'
 import Header from '@/components/layout/Header'
+import CartDrawer from '@/components/cart/CartDrawer'
 import Footer from '@/components/layout/Footer'
 
 export const metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="font-sans antialiased bg-white text-gray-900">
         <Providers>
           <Header />
+          <CartDrawer />
           <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>

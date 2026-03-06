@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
@@ -13,7 +13,7 @@ interface Order {
   total: number
 }
 
-export default function AccountPage() {
+function AccountPageInner() {
   const [orders, setOrders] = useState<Order[]>([])
   const [user, setUser] = useState<any>(null)
   const [loaded, setLoaded] = useState(false)
@@ -176,5 +176,13 @@ export default function AccountPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense>
+      <AccountPageInner />
+    </Suspense>
   )
 }

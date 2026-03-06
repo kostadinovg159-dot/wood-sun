@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 
+interface ProductVariant {
+  id: string
+  color: string
+}
+
 interface Product {
   id: string
   name: string
@@ -11,6 +16,27 @@ interface Product {
   price: number
   b2bPrice?: number
   material: string
+  image: string
+  variants: ProductVariant[]
+}
+
+function colorToHex(color: string): string {
+  const map: Record<string, string> = {
+    brown: '#8B5E3C',
+    black: '#1a1a1a',
+    natural: '#C19A6B',
+    walnut: '#5C3A1E',
+    bamboo: '#8B9B5E',
+    oak: '#C8A96E',
+    maple: '#D4956A',
+    ebony: '#2C1810',
+    grey: '#6B6B6B',
+    gray: '#6B6B6B',
+    blue: '#3B82F6',
+    green: '#22C55E',
+    red: '#EF4444',
+  }
+  return map[color.toLowerCase()] ?? '#8B5E3C'
 }
 
 export default function ProductsPage() {
@@ -23,11 +49,9 @@ export default function ProductsPage() {
     async function load() {
       const res = await fetch('/api/products')
       let data = await res.json()
-      // apply simple material filter
       if (filterMaterial !== 'all') {
         data = data.filter((p: any) => p.material.toLowerCase() === filterMaterial)
       }
-      // simple sort
       if (sortBy === 'price-low') data.sort((a: any, b: any) => a.price - b.price)
       if (sortBy === 'price-high') data.sort((a: any, b: any) => b.price - a.price)
       setProducts(
@@ -38,6 +62,8 @@ export default function ProductsPage() {
           price: p.price,
           b2bPrice: p.b2bPrice,
           material: p.material,
+          image: p.image ?? '😎',
+          variants: p.variants ?? [],
         }))
       )
     }
@@ -133,13 +159,31 @@ export default function ProductsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <Link href={`/products/${product.slug}`} key={product.id}>
-                  <div className="card overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  <div className="card overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer h-full">
                     <div className="aspect-square bg-gradient-to-br from-wood-100 to-sage-100 flex items-center justify-center text-5xl p-4">
-                      😎
+                      {product.image}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
-                      <p className="text-sm text-gray-600 mb-4">{product.material} Wood</p>
+                      <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                      <p className="text-sm text-gray-600 mb-3">{product.material} Wood</p>
+
+                      {/* Variant swatches */}
+                      {product.variants.length > 0 && (
+                        <div className="flex items-center gap-1 mb-3">
+                          {product.variants.slice(0, 4).map((v) => (
+                            <span
+                              key={v.id}
+                              className="w-4 h-4 rounded-full border border-gray-300 inline-block"
+                              style={{ backgroundColor: colorToHex(v.color) }}
+                              title={v.color}
+                            />
+                          ))}
+                          {product.variants.length > 4 && (
+                            <span className="text-xs text-gray-500">+{product.variants.length - 4}</span>
+                          )}
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold text-wood-600">
                           ${

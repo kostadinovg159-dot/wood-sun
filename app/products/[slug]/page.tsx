@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useCart } from '@/components/cart/CartContext'
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params)
   const [product, setProduct] = useState<any>(null)
   const [selectedVariantId, setSelectedVariantId] = useState<string>('')
   const [added, setAdded] = useState(false)
@@ -15,7 +16,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     async function load() {
-      const res = await fetch(`/api/products/${params.slug}`)
+      const res = await fetch(`/api/products/${slug}`)
       const data = await res.json()
       if (data.error) {
         router.push('/products')
@@ -27,7 +28,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       }
     }
     load()
-  }, [params.slug, router])
+  }, [slug, router])
 
   if (!product) return <p className="p-8">Loading...</p>
 

@@ -38,7 +38,7 @@ export default function FeaturedProducts() {
   }, [])
 
   return (
-    <section className="section-padding">
+    <section className="section-padding bg-[#FAF7F2]">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="mb-4">Featured Collection</h2>
@@ -51,16 +51,16 @@ export default function FeaturedProducts() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <Link href={`/products/${product.slug}`} key={product.id}>
-              <div className="card overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <div className="aspect-square bg-gradient-to-br from-wood-100 to-sage-100 flex items-center justify-center text-5xl p-4">
+              <div className="card overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer h-full">
+                <div className="aspect-square bg-gradient-to-br from-amber-50 to-wood-100 flex items-center justify-center text-5xl p-4">
                   {product.image}
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2 text-base">{product.name}</h3>
                   <p className="text-sm text-gray-600 mb-4">{product.material}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-wood-600">
-                        ${(session?.user as any)?.isB2B && product.b2bPrice ? product.b2bPrice : product.price}
+                    <span className="text-2xl font-bold text-amber-700">
+                      ${(session?.user as any)?.isB2B && product.b2bPrice ? product.b2bPrice : product.price}
                     </span>
                     <button className="btn btn-primary px-3 py-1 text-sm">Add</button>
                   </div>

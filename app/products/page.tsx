@@ -71,12 +71,12 @@ export default function ProductsPage() {
   }, [filterMaterial, sortBy])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FAF7F2]">
       {/* Header */}
-      <div className="bg-sage-50 py-8 sm:py-12">
+      <div className="bg-gradient-to-r from-wood-800 to-wood-700 py-8 sm:py-12">
         <div className="container">
-          <h1>Shop Our Collection</h1>
-          <p className="text-gray-600 mt-2">Discover our range of eco-friendly wooden sunglasses</p>
+          <h1 className="text-white">Shop Our Collection</h1>
+          <p className="text-wood-200 mt-2">Discover our range of eco-friendly wooden sunglasses</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Filters */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-lg p-6">
+            <div className="bg-white border border-wood-100 rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-4">Filters</h3>
 
               {/* Material Filter */}
@@ -100,7 +100,7 @@ export default function ProductsPage() {
                         value={material.toLowerCase()}
                         checked={filterMaterial === material.toLowerCase()}
                         onChange={(e) => setFilterMaterial(e.target.value)}
-                        className="w-4 h-4"
+                        className="w-4 h-4 accent-amber-600"
                       />
                       <span className="text-sm text-gray-700">{material}</span>
                     </label>
@@ -108,28 +108,28 @@ export default function ProductsPage() {
                 </div>
               </div>
 
-              <hr className="mb-6" />
+              <hr className="mb-6 border-wood-100" />
 
               {/* Price Range */}
               <div className="mb-6">
                 <p className="text-sm font-semibold text-gray-900 mb-3">Price Range</p>
-                <input type="range" min="0" max="150" className="w-full" />
+                <input type="range" min="0" max="150" className="w-full accent-amber-600" />
                 <div className="flex justify-between text-sm text-gray-600 mt-2">
                   <span>$0</span>
                   <span>$150</span>
                 </div>
               </div>
 
-              <hr className="mb-6" />
+              <hr className="mb-6 border-wood-100" />
 
               {/* Other Filters */}
               <div>
                 <label className="flex items-center gap-2 cursor-pointer mb-2">
-                  <input type="checkbox" className="w-4 h-4" />
+                  <input type="checkbox" className="w-4 h-4 accent-amber-600" />
                   <span className="text-sm text-gray-700">Polarized Lenses</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4" />
+                  <input type="checkbox" className="w-4 h-4 accent-amber-600" />
                   <span className="text-sm text-gray-700">In Stock Only</span>
                 </label>
               </div>
@@ -139,7 +139,7 @@ export default function ProductsPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             {/* Toolbar */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-wood-200">
               <p className="text-sm text-gray-600">
                 Showing <strong>{products.length}</strong> products
               </p>
@@ -160,11 +160,11 @@ export default function ProductsPage() {
               {products.map((product) => (
                 <Link href={`/products/${product.slug}`} key={product.id}>
                   <div className="card overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer h-full">
-                    <div className="aspect-square bg-gradient-to-br from-wood-100 to-sage-100 flex items-center justify-center text-5xl p-4">
+                    <div className="aspect-square bg-gradient-to-br from-amber-50 to-wood-100 flex items-center justify-center text-5xl p-4">
                       {product.image}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                      <h3 className="font-semibold text-gray-900 mb-1 text-base">{product.name}</h3>
                       <p className="text-sm text-gray-600 mb-3">{product.material} Wood</p>
 
                       {/* Variant swatches */}
@@ -185,7 +185,7 @@ export default function ProductsPage() {
                       )}
 
                       <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-wood-600">
+                        <span className="text-2xl font-bold text-amber-700">
                           ${
                             (session?.user as any)?.isB2B && product.b2bPrice
                               ? product.b2bPrice.toFixed(2)

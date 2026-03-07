@@ -8,7 +8,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Eco-friendly, wood-inspired palette
         wood: {
           50: '#faf6f1',
           100: '#f5ede3',
@@ -36,6 +35,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        playfair: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
     },
   },

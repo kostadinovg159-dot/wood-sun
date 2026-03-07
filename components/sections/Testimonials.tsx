@@ -11,7 +11,7 @@ export default function Testimonials() {
     {
       name: 'Michael Chen',
       role: 'HR Manager',
-      text: 'Best corporate gift we\'ve given. The eco-friendly aspect resonated with our employees and customers.',
+      text: "Best corporate gift we've given. The eco-friendly aspect resonated with our employees and customers.",
       rating: 5,
     },
     {
@@ -23,7 +23,7 @@ export default function Testimonials() {
   ]
 
   return (
-    <section className="section-padding bg-gray-50">
+    <section className="section-padding bg-wood-50">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="mb-4">What Our Customers Say</h2>
@@ -32,11 +32,11 @@ export default function Testimonials() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial, idx) => (
-            <div key={idx} className="card p-6">
+            <div key={idx} className="bg-white rounded-lg border border-wood-100 shadow-sm p-6 border-l-4 border-l-amber-400">
               {/* Rating */}
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <span key={i} className="text-xl">⭐</span>
+                  <span key={i} className="text-amber-400 text-xl">★</span>
                 ))}
               </div>
 

@@ -25,7 +25,7 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-[#FAF7F2] border-b border-wood-200 sticky top-0 z-50">
       <nav className="container flex items-center justify-between h-16 sm:h-20">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl sm:text-2xl text-wood-700">
@@ -35,13 +35,13 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/products" className="text-gray-700 hover:text-wood-600 transition">
+          <Link href="/products" className="text-gray-700 hover:text-amber-700 transition">
             Shop
           </Link>
-          <Link href="/b2b/register" className="text-gray-700 hover:text-wood-600 transition">
+          <Link href="/b2b/register" className="text-gray-700 hover:text-amber-700 transition">
             B2B Wholesale
           </Link>
-          <Link href="/about" className="text-gray-700 hover:text-wood-600 transition">
+          <Link href="/about" className="text-gray-700 hover:text-amber-700 transition">
             About
           </Link>
         </div>
@@ -51,14 +51,14 @@ export default function Header() {
           {/* Cart icon */}
           <button
             onClick={openDrawer}
-            className="relative p-2 hover:bg-gray-100 rounded-lg transition"
+            className="relative p-2 hover:bg-wood-100 rounded-lg transition"
             aria-label="Open cart"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-wood-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {itemCount > 99 ? '99+' : itemCount}
               </span>
             )}
@@ -66,7 +66,7 @@ export default function Header() {
 
           {/* Account icon */}
           {!session?.user ? (
-            <Link href="/auth/signin" className="p-2 hover:bg-gray-100 rounded-lg transition" aria-label="Sign in">
+            <Link href="/auth/signin" className="p-2 hover:bg-wood-100 rounded-lg transition" aria-label="Sign in">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -75,7 +75,7 @@ export default function Header() {
             <div className="relative" ref={accountRef}>
               <button
                 onClick={() => setAccountOpen((o) => !o)}
-                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition"
+                className="flex items-center gap-2 p-2 hover:bg-wood-100 rounded-lg transition"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -83,19 +83,19 @@ export default function Header() {
                 <span className="text-sm text-gray-700">Hi, {session.user.name?.split(' ')[0] ?? 'Account'}</span>
               </button>
               {accountOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10">
-                  <Link href="/account" onClick={() => setAccountOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                <div className="absolute right-0 mt-2 w-48 bg-[#FAF7F2] border border-wood-200 rounded-lg shadow-lg py-1 z-10">
+                  <Link href="/account" onClick={() => setAccountOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-wood-50">
                     My Account
                   </Link>
                   {isAdmin && (
-                    <Link href="/admin" onClick={() => setAccountOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <Link href="/admin" onClick={() => setAccountOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-wood-50">
                       Admin Panel
                     </Link>
                   )}
-                  <hr className="my-1" />
+                  <hr className="my-1 border-wood-200" />
                   <button
                     onClick={() => { setAccountOpen(false); signOut() }}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-wood-50"
                   >
                     Sign Out
                   </button>
@@ -109,21 +109,21 @@ export default function Header() {
         <div className="md:hidden flex items-center gap-2">
           <button
             onClick={openDrawer}
-            className="relative p-2 hover:bg-gray-100 rounded-lg"
+            className="relative p-2 hover:bg-wood-100 rounded-lg"
             aria-label="Open cart"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-wood-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {itemCount > 99 ? '99+' : itemCount}
               </span>
             )}
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-wood-100 rounded-lg"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -133,29 +133,29 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 p-4">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-[#FAF7F2] border-b border-wood-200 p-4">
             <div className="flex flex-col gap-4">
-              <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-wood-600">
+              <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-amber-700">
                 Shop
               </Link>
-              <Link href="/b2b/register" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-wood-600">
+              <Link href="/b2b/register" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-amber-700">
                 B2B Wholesale
               </Link>
-              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-wood-600">
+              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-amber-700">
                 About
               </Link>
-              <hr />
+              <hr className="border-wood-200" />
               {!session?.user ? (
                 <Link href="/auth/signin" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary justify-center">
                   Sign In
                 </Link>
               ) : (
                 <>
-                  <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-wood-600">
+                  <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-amber-700">
                     My Account
                   </Link>
                   {isAdmin && (
-                    <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-wood-600">
+                    <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-amber-700">
                       Admin Panel
                     </Link>
                   )}

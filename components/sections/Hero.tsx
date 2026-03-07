@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-b from-sage-50 to-white section-padding">
+    <section className="relative bg-gradient-to-b from-[#FAF7F2] via-wood-50 to-amber-50 section-padding">
       <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Text */}
         <div className="space-y-6">
@@ -25,7 +25,7 @@ export default function Hero() {
           </div>
 
           {/* Trust Signals */}
-          <div className="flex flex-wrap gap-6 pt-8 border-t border-gray-200 text-sm text-gray-600">
+          <div className="flex flex-wrap gap-6 pt-8 border-t border-wood-200 text-sm text-gray-600">
             <div>
               <p className="font-semibold text-gray-900">🌱 100% Eco-Friendly</p>
               <p>No plastic, sustainable materials</p>
@@ -36,14 +36,14 @@ export default function Hero() {
             </div>
             <div>
               <p className="font-semibold text-gray-900">🎁 Customizable</p>
-              <p>Laser engraving & branding</p>
+              <p>Laser engraving &amp; branding</p>
             </div>
           </div>
         </div>
 
         {/* Image Placeholder */}
         <div className="hidden lg:block">
-          <div className="aspect-square bg-gradient-to-br from-wood-100 to-sage-100 rounded-2xl flex items-center justify-center text-6xl">
+          <div className="aspect-square bg-gradient-to-br from-amber-50 to-wood-100 rounded-2xl flex items-center justify-center text-6xl border border-wood-200">
             😎
           </div>
         </div>

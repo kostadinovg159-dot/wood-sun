@@ -17,6 +17,9 @@ interface CartContextValue {
   updateQuantity: (id: string, quantity: number) => void
   removeItem: (id: string) => void
   clear: () => void
+  isDrawerOpen: boolean
+  openDrawer: () => void
+  closeDrawer: () => void
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined)

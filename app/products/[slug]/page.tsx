@@ -5,6 +5,32 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useCart } from '@/components/cart/CartContext'
 
+function ImageGallery({ images }: { images: string[] }) {
+  const [active, setActive] = useState(0)
+  return (
+    <div className="mb-6">
+      <div className="aspect-square rounded-2xl overflow-hidden border border-wood-100 mb-3">
+        <img src={images[active]} alt="" className="w-full h-full object-cover" />
+      </div>
+      {images.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {images.map((url, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition ${
+                i === active ? 'border-wood-600' : 'border-transparent'
+              }`}
+            >
+              <img src={url} alt="" className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const [product, setProduct] = useState<any>(null)
@@ -59,7 +85,34 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           ← Back
         </button>
 
-        <div className="text-6xl mb-6">{product.image}</div>
+        {/* Image gallery */}
+        {product.images?.length > 0 ? (
+          <ImageGallery images={product.images} />
+        ) : (
+          <div className="w-full aspect-square bg-wood-50 rounded-2xl flex items-center justify-center text-6xl mb-6 border border-wood-100">
+            😎
+          </div>
+        )}
+
+        {/* Video */}
+        {(product.videoEmbedUrl || product.videoFileUrl) && (
+          <div className="mb-6">
+            {product.videoEmbedUrl ? (
+              <iframe
+                src={product.videoEmbedUrl}
+                className="w-full aspect-video rounded-xl"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+              />
+            ) : (
+              <video
+                src={product.videoFileUrl}
+                controls
+                className="w-full aspect-video rounded-xl bg-black"
+              />
+            )}
+          </div>
+        )}
 
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
         <p className="text-gray-600 mb-6">{product.description}</p>

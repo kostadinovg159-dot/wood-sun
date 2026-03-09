@@ -16,7 +16,7 @@ interface Product {
   price: number
   b2bPrice?: number
   material: string
-  image: string
+  images: string[]
   variants: ProductVariant[]
 }
 
@@ -62,7 +62,7 @@ export default function ProductsPage() {
           price: p.price,
           b2bPrice: p.b2bPrice,
           material: p.material,
-          image: p.image ?? '😎',
+          images: p.images ?? [],
           variants: p.variants ?? [],
         }))
       )
@@ -160,8 +160,12 @@ export default function ProductsPage() {
               {products.map((product) => (
                 <Link href={`/products/${product.slug}`} key={product.id}>
                   <div className="card overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer h-full">
-                    <div className="aspect-square bg-gradient-to-br from-amber-50 to-wood-100 flex items-center justify-center text-5xl p-4">
-                      {product.image}
+                    <div className="aspect-square bg-gradient-to-br from-amber-50 to-wood-100 flex items-center justify-center overflow-hidden">
+                      {product.images?.[0] ? (
+                        <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-5xl">😎</span>
+                      )}
                     </div>
                     <div className="p-4">
                       <h3 className="font-semibold text-gray-900 mb-1 text-base">{product.name}</h3>

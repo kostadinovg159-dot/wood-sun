@@ -12,7 +12,7 @@ export async function GET() {
         description: 'Handcrafted walnut sunglasses with classic design',
         price: 79.99,
         b2bPrice: 49.99,
-        image: '😎',
+        images: [],
         material: 'Walnut',
         style: 'Classic',
         isPolarized: false,
@@ -32,7 +32,7 @@ export async function GET() {
         description: 'Eco-friendly bamboo with modern aesthetic',
         price: 89.99,
         b2bPrice: 54.99,
-        image: '😎',
+        images: [],
         material: 'Bamboo',
         style: 'Modern',
         isPolarized: false,
@@ -52,7 +52,7 @@ export async function GET() {
         description: 'Premium maple with polarized lenses',
         price: 99.99,
         b2bPrice: 64.99,
-        image: '😎',
+        images: [],
         material: 'Maple',
         style: 'Classic',
         isPolarized: true,
@@ -71,4 +71,46 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
   })
   return NextResponse.json(products)
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  const { name, slug, description, price, b2bPrice, images, videoEmbedUrl, videoFileUrl, material, style, isPolarized, variants } = body
+
+  if (!name || !slug || !price || !material || !style) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  }
+
+  const product = await prisma.product.create({
+    data: {
+      name,
+      slug,
+      description: description || '',
+      price: parseFloat(price),
+      b2bPrice: b2bPrice ? parseFloat(b2bPrice) : null,
+      images: images || [],
+      videoEmbedUrl: videoEmbedUrl || null,
+      videoFileUrl: videoFileUrl || null,
+      material,
+      style,
+      isPolarized: !!isPolarized,
+    },
+  })
+
+  if (variants && variants.length > 0) {
+    await prisma.productVariant.createMany({
+      data: variants.map((v: any) => ({
+        productId: product.id,
+        name: v.name,
+        sku: v.sku,
+        color: v.color,
+        lensType: v.lensType,
+        priceDifference: parseFloat(v.priceDifference) || 0,
+        stock: parseInt(v.stock) || 0,
+      })),
+    })
+  }
+
+  const full = await prisma.product.findUnique({ where: { id: product.id }, include: { variants: true } })
+  return NextResponse.json(full, { status: 201 })
 }

@@ -82,8 +82,10 @@ model Product {
   description String  
   price       Float   // Regular B2C price
   b2bPrice    Float?  // Wholesale price for B2B
-  image       String
-  
+  images        String[]  // array of Vercel Blob URLs
+  videoEmbedUrl String?   // YouTube or Vimeo embed URL
+  videoFileUrl  String?   // Direct MP4 Vercel Blob URL
+
   // Properties
   material    String  // Wood type (e.g., "Walnut", "Bamboo")
   style       String  // Style (e.g., "Classic", "Modern", "Vintage")

@@ -38,6 +38,20 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: { variants: true },
+  })
+  if (!product) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  const variantIds = product.variants.map((v) => v.id)
+
+  // Remove cart items referencing these variants first
+  if (variantIds.length > 0) {
+    await prisma.cartItem.deleteMany({ where: { variantId: { in: variantIds } } })
+  }
+
   await prisma.product.delete({ where: { slug } })
   return NextResponse.json({ ok: true })
 }

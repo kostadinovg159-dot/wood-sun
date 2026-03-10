@@ -208,18 +208,19 @@ function ProductManager() {
     setSaving(true)
     setMsg('')
     try {
-      if (editing) {
-        await fetch(`/api/products/${editing.slug}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...form, variants }),
-        })
-      } else {
-        await fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...form, variants }),
-        })
+      const filledVariants = variants.filter((v: any) => v.name && v.sku)
+      const url = editing ? `/api/products/${editing.slug}` : '/api/products'
+      const method = editing ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, variants: filledVariants }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        setMsg(`Error: ${err.error || res.statusText || 'Failed to save product'}`)
+        setSaving(false)
+        return
       }
       await loadProducts()
       setShowForm(false)

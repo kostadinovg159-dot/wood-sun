@@ -52,7 +52,11 @@ const emptyProduct = {
   isPolarized: false,
 }
 
-const emptyVariant = { name: '', sku: '', color: '', lensType: 'Regular', priceDifference: '0', stock: '0' }
+const emptyVariant = { name: '', sku: '', color: '', lensColor: 'Dark', lensType: 'Regular', priceDifference: '0', stock: '0' }
+
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
 
 export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([])
@@ -288,12 +292,22 @@ function ProductManager() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <label className="block text-sm font-medium mb-1">Name</label>
-                <input className="input w-full" value={form.name} onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))} />
+                <input
+                  className="input w-full"
+                  value={form.name}
+                  onChange={e => setForm((f: any) => ({
+                    ...f,
+                    name: e.target.value,
+                    slug: editing ? f.slug : toSlug(e.target.value),
+                  }))}
+                />
               </div>
-              <div className="col-span-2">
-                <label className="block text-sm font-medium mb-1">Slug (URL key, no spaces)</label>
-                <input className="input w-full" value={form.slug} onChange={e => setForm((f: any) => ({ ...f, slug: e.target.value }))} disabled={!!editing} />
-              </div>
+              {editing && (
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium mb-1">Slug (URL key)</label>
+                  <input className="input w-full bg-gray-50 text-gray-500" value={form.slug} disabled />
+                </div>
+              )}
               <div className="col-span-2">
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea className="input w-full h-20" value={form.description} onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))} />
@@ -416,8 +430,12 @@ function ProductManager() {
                     <input className="input w-full text-sm" value={v.sku} onChange={e => setVariantField(i, 'sku', e.target.value)} placeholder="e.g. CW-NAT-DRK" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1">Color</label>
+                    <label className="block text-xs font-medium mb-1">Frame Color</label>
                     <input className="input w-full text-sm" value={v.color} onChange={e => setVariantField(i, 'color', e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1">Lens Color</label>
+                    <input className="input w-full text-sm" value={v.lensColor || ''} onChange={e => setVariantField(i, 'lensColor', e.target.value)} placeholder="e.g. Dark, Amber, Green" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1">Lens type</label>

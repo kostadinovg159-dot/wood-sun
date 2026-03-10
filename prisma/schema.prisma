@@ -105,6 +105,7 @@ model ProductVariant {
   name            String  // e.g., "Brown Walnut with Dark Lenses"
   sku             String  @unique
   color           String
+  lensColor       String  @default("Dark")
   lensType        String  // "Regular", "Polarized", "UV Protection"
   priceDifference Float   @default(0) // Added to base product price
   stock           Int     @default(50)
